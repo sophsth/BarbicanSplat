@@ -610,6 +610,7 @@
             <div class="load-bar-wrap" id="load-bar-wrap">
                 <div class="load-bar" id="load-bar"></div>
             </div>
+            <div id="load-progress" style="font-size:10px;letter-spacing:.1em;color:rgba(232,231,239,.4);margin-top:10px;display:none;"></div>
         </div>
 
         <div id="controls-hint">
@@ -755,10 +756,13 @@ function handleKeys(dt) {
 
 // ── File loading ──────────────────────────────────────
 async function loadUrl(url, displayName, ext) {
-    loadTitle.textContent     = 'SPLAT_';
-    loadBarWrap.style.display = 'block';
-    loadBar.style.width       = '8%';
-    loadingEl.style.display   = 'flex';
+    const progressEl = document.getElementById('load-progress');
+    loadTitle.textContent      = 'SPLAT_';
+    loadBarWrap.style.display  = 'block';
+    progressEl.style.display   = 'block';
+    loadBar.style.width        = '0%';
+    loadingEl.style.display    = 'flex';
+    progressEl.textContent     = 'CONNECTING…';
     setStatus('Loading: ' + displayName);
 
     let format;
@@ -767,31 +771,68 @@ async function loadUrl(url, displayName, ext) {
     if (ext === 'ksplat') format = GS3D.SceneFormat.KSplat;
 
     try {
-        loadBar.style.width = '35%';
+        // ── Fetch with real download progress ──────────────
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
 
-        await viewer.addSplatScene(url, {
+        const contentLength = response.headers.get('Content-Length');
+        const total = contentLength ? parseInt(contentLength) : null;
+        const reader = response.body.getReader();
+        const chunks = [];
+        let received = 0;
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            received += value.length;
+            if (total) {
+                const pct = received / total;
+                loadBar.style.width = (pct * 85) + '%';
+                progressEl.textContent = fmt(received) + ' / ' + fmt(total);
+            } else {
+                progressEl.textContent = fmt(received) + ' downloaded…';
+            }
+        }
+
+        progressEl.textContent = 'PROCESSING…';
+        loadBar.style.width    = '90%';
+
+        // Reassemble into a single ArrayBuffer → blob URL
+        const buffer = new Uint8Array(received);
+        let pos = 0;
+        for (const chunk of chunks) { buffer.set(chunk, pos); pos += chunk.length; }
+        const blob    = new Blob([buffer], { type: 'application/octet-stream' });
+        const blobUrl = URL.createObjectURL(blob);
+
+        await viewer.addSplatScene(blobUrl, {
             format,
             showLoadingUI:              false,
             splatAlphaRemovalThreshold: parseInt(document.getElementById('ctrl-alpha').value, 10),
-            progressiveLoad:            false,
+            progressiveLoad:            true,
             rotation:                   [0, 0, 0, 1],
             position:                   [0, 0, 0],
             scale:                      [1, 1, 1],
         });
 
+        URL.revokeObjectURL(blobUrl);
         loadBar.style.width = '100%';
         setTimeout(() => {
-            loadingEl.style.display   = 'none';
-            loadBarWrap.style.display = 'none';
-            dropHint.style.display    = '';
-        }, 350);
+            loadingEl.style.display  = 'none';
+            progressEl.style.display = 'none';
+        }, 400);
         setStatus('✓ ' + displayName);
     } catch (err) {
         console.error(err);
-        loadingEl.style.display   = 'none';
-        loadBarWrap.style.display = 'none';
+        loadingEl.style.display  = 'none';
+        progressEl.style.display = 'none';
         setStatus('Error: ' + (err.message || 'load failed'));
     }
+}
+
+function fmt(bytes) {
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(0) + ' MB';
 }
 
 async function loadFile(file) {

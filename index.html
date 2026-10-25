@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPLAT.EXE — Gaussian Viewer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --black:   #040406;
-            --white:   #FFFFFF;
-            --soft:    #E8E7EF;
-            --lav:     #B9B8D3;
-            --pink:    #FCA9FD;
-            --mint:    #C5FCF0;
+            --black: #040406;
+            --soft:  #E8E7EF;
+            --lav:   #B9B8D3;
+            --pink:  #FCA9FD;
+            --mint:  #C5FCF0;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,7 +20,7 @@
         body {
             background: var(--black);
             color: var(--soft);
-            font-family: 'Share Tech Mono', monospace;
+            font-family: 'Nanum Gothic', Helvetica, sans-serif;
             overflow: hidden;
             width: 100vw;
             height: 100vh;
@@ -35,70 +34,73 @@
            PANEL
         ════════════════════════════════════ */
         #panel {
-            width: 272px;
-            min-width: 272px;
+            width: 300px;
+            min-width: 300px;
             background: var(--black);
-            border-right: 1px solid rgba(185,184,211,0.35);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             position: relative;
             z-index: 10;
+            border-right: 1px solid rgba(255,255,255,0.08);
         }
 
-        /* subtle scanline texture */
-        #panel::after {
-            content: '';
+        /* colorful blur blobs */
+        .blob {
             position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 3px,
-                rgba(255,255,255,0.013) 3px,
-                rgba(255,255,255,0.013) 4px
-            );
+            border-radius: 50%;
+            filter: blur(60px);
             pointer-events: none;
             z-index: 0;
+        }
+        .blob-1 {
+            left: -20%; top: -4%;
+            width: 80%; height: 30%;
+            background: var(--lav);
+            opacity: .38;
+            animation: drift 16s ease-in-out infinite;
+        }
+        .blob-2 {
+            right: -30%; top: 22%;
+            width: 85%; height: 28%;
+            background: var(--mint);
+            opacity: .32;
+        }
+        .blob-3 {
+            left: -25%; top: 52%;
+            width: 80%; height: 25%;
+            background: #fde68a;
+            opacity: .22;
+            animation: drift 20s ease-in-out infinite;
+        }
+        .blob-4 {
+            right: -20%; bottom: -6%;
+            width: 85%; height: 28%;
+            background: var(--pink);
+            opacity: .35;
+        }
+
+        @keyframes drift {
+            0%   { transform: translate(0,0) scale(1); }
+            50%  { transform: translate(3%,-4%) scale(1.05); }
+            100% { transform: translate(0,0) scale(1); }
         }
 
         #panel > * { position: relative; z-index: 1; }
 
         /* ── Header ── */
         #panel-header {
-            padding: 18px 18px 14px;
-            border-bottom: 1px solid rgba(252,169,253,0.45);
-            background: rgba(252,169,253,0.025);
+            padding: 24px 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,.18);
             flex-shrink: 0;
         }
 
-        .logo {
-            display: flex;
-            align-items: baseline;
-            gap: 2px;
-        }
-
-        .logo-word {
-            font-family: 'VT323', monospace;
+        .logo-title {
+            font-weight: 800;
             font-size: 34px;
-            color: var(--pink);
-            letter-spacing: 5px;
-            line-height: 1;
-        }
-
-        .logo-ext {
-            font-family: 'VT323', monospace;
-            font-size: 18px;
-            color: rgba(252,169,253,0.5);
-            letter-spacing: 2px;
-        }
-
-        .logo-sub {
-            font-size: 8.5px;
-            color: var(--lav);
-            letter-spacing: 2.5px;
-            margin-top: 5px;
-            opacity: 0.7;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            color: var(--soft);
         }
 
         /* ── Scroll body ── */
@@ -106,205 +108,239 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 14px 16px 10px;
             scrollbar-width: thin;
-            scrollbar-color: rgba(185,184,211,0.25) transparent;
+            scrollbar-color: rgba(255,255,255,.2) transparent;
         }
 
         #panel-scroll::-webkit-scrollbar { width: 3px; }
         #panel-scroll::-webkit-scrollbar-track { background: transparent; }
-        #panel-scroll::-webkit-scrollbar-thumb { background: rgba(185,184,211,0.25); }
+        #panel-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); }
 
         /* ── Section ── */
-        .section { margin-bottom: 20px; }
+        .section {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,.18);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .section:last-child { border-bottom: none; }
 
         .sec-title {
-            font-size: 8px;
-            letter-spacing: 3px;
-            color: var(--mint);
-            text-transform: uppercase;
-            margin-bottom: 11px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid rgba(197,252,240,0.14);
+            font-size: 12px;
+            letter-spacing: .1em;
+            color: var(--soft);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
         }
 
-        .sec-title::before {
-            content: '▸';
-            font-size: 7px;
-            opacity: 0.7;
-        }
-
-        /* ── Slider group ── */
-        .ctrl-group { margin-bottom: 11px; }
-
+        /* ── 3-col grid for slider rows ── */
         .ctrl-row {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 96px minmax(0,1fr) 54px;
             align-items: center;
-            margin-bottom: 4px;
+            gap: 12px;
+            font-size: 12px;
+            letter-spacing: .06em;
         }
 
-        .ctrl-label {
-            font-size: 10px;
-            letter-spacing: 1.5px;
-            color: var(--lav);
-            text-transform: uppercase;
+        .ctrl-lbl {
+            color: rgba(232,231,239,.55);
         }
 
         .ctrl-val {
-            font-size: 10px;
-            color: var(--soft);
-            min-width: 38px;
             text-align: right;
             font-variant-numeric: tabular-nums;
+            color: var(--soft);
         }
 
-        input[type="range"] {
+        /* ── Custom slider ── */
+        .slider-wrap {
+            position: relative;
+            height: 20px;
+        }
+
+        /* baseline track */
+        .slider-wrap::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0;
+            top: 50%; transform: translateY(-50%);
+            height: 1px;
+            background: rgba(232,231,239,.28);
+        }
+
+        /* tick marks */
+        .slider-wrap::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0;
+            top: calc(50% - 4px);
+            height: 9px;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(232,231,239,.25) 0 1px,
+                transparent 1px 10%
+            );
+        }
+
+        .slider-fill {
+            position: absolute;
+            left: 0;
+            width: 50%;
+            top: calc(50% - 1px);
+            height: 2px;
+            background: var(--soft);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .slider-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--black);
+            border: 1.5px solid var(--soft);
+            top: 50%;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .slider-wrap input[type="range"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 3;
+            margin: 0;
             -webkit-appearance: none;
             appearance: none;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(
-                to right,
-                var(--pink) 0%,
-                var(--pink) var(--pct, 50%),
-                rgba(185,184,211,0.18) var(--pct, 50%)
-            );
-            outline: none;
-            cursor: pointer;
-            border-radius: 0;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 10px;
-            height: 10px;
-            background: var(--pink);
-            cursor: pointer;
-            border: none;
-            border-radius: 0;
-            box-shadow: 0 0 5px rgba(252,169,253,0.55);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 10px;
-            height: 10px;
-            background: var(--pink);
-            cursor: pointer;
-            border: none;
-            border-radius: 0;
         }
 
         /* ── Buttons ── */
         .btn {
-            display: block;
             width: 100%;
-            padding: 7px 10px;
-            background: transparent;
-            border: 1px solid rgba(185,184,211,0.35);
-            color: var(--lav);
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 10px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            height: 28px;
+            font: inherit;
+            font-size: 12px;
+            letter-spacing: .1em;
+            background: rgba(255,255,255,.06);
+            color: var(--soft);
+            border: 1px solid rgba(255,255,255,.45);
             cursor: pointer;
-            text-align: center;
-            transition: border-color 0.1s, color 0.1s, background 0.1s;
-            margin-bottom: 6px;
+            transition: background .12s, border-color .12s;
         }
 
         .btn:hover {
-            border-color: var(--pink);
-            color: var(--pink);
-            background: rgba(252,169,253,0.04);
+            background: rgba(255,255,255,.13);
+            border-color: var(--soft);
         }
 
-        .btn:active { background: rgba(252,169,253,0.09); }
+        .btn:active { background: rgba(255,255,255,.2); }
 
-        .btn.accent {
-            border-color: rgba(197,252,240,0.45);
-            color: var(--mint);
-        }
-
-        .btn.accent:hover {
-            border-color: var(--mint);
-            color: var(--soft);
-            background: rgba(197,252,240,0.05);
-        }
-
-        /* ── Status text ── */
+        /* ── Status ── */
         #status {
-            font-size: 9px;
-            letter-spacing: 1px;
-            color: rgba(197,252,240,0.6);
-            min-height: 13px;
-            margin-top: 4px;
+            font-size: 11px;
+            letter-spacing: .04em;
+            color: rgba(232,231,239,.5);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            min-height: 16px;
         }
 
-        /* ── Toggles ── */
+        /* ── SH degree button group ── */
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            border: 1px solid rgba(255,255,255,.35);
+        }
+
+        .btn-group button {
+            height: 28px;
+            font: inherit;
+            font-size: 12px;
+            background: transparent;
+            color: var(--soft);
+            border: 0;
+            border-right: 1px solid rgba(255,255,255,.35);
+            cursor: pointer;
+            transition: background .12s;
+        }
+
+        .btn-group button:last-child { border-right: 0; }
+
+        .btn-group button.active {
+            background: var(--soft);
+            color: var(--black);
+        }
+
+        .btn-group button:hover:not(.active) {
+            background: rgba(255,255,255,.1);
+        }
+
+        /* ── Toggle row ── */
         .toggle-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 9px;
+            font-size: 12px;
+            letter-spacing: .06em;
             cursor: pointer;
         }
 
-        .toggle-row:hover .ctrl-label { color: var(--soft); }
+        .toggle-row:hover .ctrl-lbl { color: var(--soft); }
 
         .toggle {
             width: 28px;
             height: 14px;
-            background: rgba(185,184,211,0.12);
-            border: 1px solid rgba(185,184,211,0.28);
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.28);
             position: relative;
             cursor: pointer;
-            transition: background 0.2s, border-color 0.2s;
+            transition: background .18s, border-color .18s;
             flex-shrink: 0;
         }
 
         .toggle.on {
-            background: rgba(197,252,240,0.08);
-            border-color: rgba(197,252,240,0.55);
+            background: rgba(197,252,240,.12);
+            border-color: rgba(197,252,240,.6);
         }
 
         .toggle::after {
             content: '';
             position: absolute;
-            width: 10px;
-            height: 10px;
-            background: rgba(185,184,211,0.45);
-            top: 1px;
-            left: 1px;
-            transition: left 0.2s, background 0.2s, box-shadow 0.2s;
+            width: 10px; height: 10px;
+            background: rgba(255,255,255,.4);
+            top: 1px; left: 1px;
+            transition: left .18s, background .18s;
         }
 
         .toggle.on::after {
             left: 15px;
             background: var(--mint);
-            box-shadow: 0 0 4px rgba(197,252,240,0.7);
         }
 
         /* ── Footer ── */
         #panel-footer {
-            padding: 8px 16px;
-            border-top: 1px solid rgba(185,184,211,0.12);
-            font-size: 8px;
-            color: rgba(185,184,211,0.28);
+            padding: 8px 24px;
+            border-top: 1px solid rgba(255,255,255,.1);
+            font-size: 10px;
+            color: rgba(232,231,239,.25);
             letter-spacing: 1.5px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
             flex-shrink: 0;
         }
 
-        #fps { color: rgba(197,252,240,0.45); }
+        #fps { color: rgba(197,252,240,.4); }
 
         /* ════════════════════════════════════
            VIEWPORT
@@ -326,16 +362,14 @@
         /* corner brackets */
         .corner {
             position: absolute;
-            width: 18px;
-            height: 18px;
+            width: 18px; height: 18px;
             z-index: 4;
             pointer-events: none;
         }
-
-        .corner-tl { top: 14px; left: 14px; border-top: 1px solid rgba(252,169,253,0.35); border-left: 1px solid rgba(252,169,253,0.35); }
-        .corner-tr { top: 14px; right: 14px; border-top: 1px solid rgba(252,169,253,0.35); border-right: 1px solid rgba(252,169,253,0.35); }
-        .corner-bl { bottom: 14px; left: 14px; border-bottom: 1px solid rgba(252,169,253,0.35); border-left: 1px solid rgba(252,169,253,0.35); }
-        .corner-br { bottom: 14px; right: 14px; border-bottom: 1px solid rgba(252,169,253,0.35); border-right: 1px solid rgba(252,169,253,0.35); }
+        .corner-tl { top: 14px; left: 14px; border-top: 1px solid rgba(252,169,253,.3); border-left: 1px solid rgba(252,169,253,.3); }
+        .corner-tr { top: 14px; right: 14px; border-top: 1px solid rgba(252,169,253,.3); border-right: 1px solid rgba(252,169,253,.3); }
+        .corner-bl { bottom: 14px; left: 14px; border-bottom: 1px solid rgba(252,169,253,.3); border-left: 1px solid rgba(252,169,253,.3); }
+        .corner-br { bottom: 14px; right: 14px; border-bottom: 1px solid rgba(252,169,253,.3); border-right: 1px solid rgba(252,169,253,.3); }
 
         /* ── Loading overlay ── */
         #loading {
@@ -347,48 +381,47 @@
             align-items: center;
             justify-content: center;
             z-index: 20;
-            gap: 6px;
+            gap: 8px;
+            font-family: 'Nanum Gothic', Helvetica, sans-serif;
         }
 
         .load-title {
-            font-family: 'VT323', monospace;
-            font-size: 52px;
-            color: var(--pink);
-            letter-spacing: 10px;
-            animation: blink 0.9s step-end infinite;
+            font-weight: 800;
+            font-size: 48px;
+            letter-spacing: -0.03em;
+            color: var(--soft);
+            animation: blink .9s step-end infinite;
         }
 
         .load-msg {
-            font-size: 10px;
-            color: var(--lav);
-            letter-spacing: 3px;
+            font-size: 12px;
+            color: rgba(232,231,239,.45);
+            letter-spacing: .1em;
             text-transform: uppercase;
         }
 
         .load-bar-wrap {
             width: 180px;
             height: 1px;
-            background: rgba(185,184,211,0.18);
-            margin-top: 12px;
+            background: rgba(232,231,239,.15);
+            margin-top: 14px;
             overflow: hidden;
             display: none;
         }
 
         .load-bar {
             height: 100%;
-            background: var(--mint);
             width: 0%;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 6px rgba(197,252,240,0.7);
+            background: var(--mint);
+            transition: width .3s ease;
         }
 
-        /* drop hint */
         #drop-hint {
-            font-size: 9px;
-            color: rgba(185,184,211,0.35);
-            letter-spacing: 2px;
-            margin-top: 10px;
+            font-size: 10px;
+            color: rgba(232,231,239,.25);
+            letter-spacing: .12em;
             text-transform: uppercase;
+            margin-top: 6px;
         }
 
         @keyframes blink {
@@ -396,47 +429,33 @@
             50% { opacity: 0; }
         }
 
-        /* drag-over highlight */
         #viewport.drag-over { outline: 1px solid var(--mint); }
 
-        /* ── Controls hint ── */
+        /* ── Key hint ── */
         #controls-hint {
             position: absolute;
             bottom: 20px;
             right: 20px;
-            background: rgba(4,4,6,0.82);
-            border: 1px solid rgba(185,184,211,0.18);
+            background: rgba(4,4,6,.82);
+            border: 1px solid rgba(232,231,239,.12);
             padding: 12px 16px;
             z-index: 5;
             pointer-events: none;
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
+            font-family: 'Nanum Gothic', Helvetica, sans-serif;
         }
 
         .hint-row {
             display: flex;
             gap: 10px;
-            margin-bottom: 5px;
-            align-items: baseline;
+            margin-bottom: 4px;
         }
-
         .hint-row:last-child { margin-bottom: 0; }
+        .hk { font-size: 11px; color: var(--pink); min-width: 96px; letter-spacing: .03em; }
+        .hd { font-size: 10px; color: var(--lav); letter-spacing: .05em; }
 
-        .hk {
-            font-size: 10px;
-            color: var(--pink);
-            letter-spacing: 0.5px;
-            min-width: 96px;
-        }
-
-        .hd {
-            font-size: 9px;
-            color: var(--lav);
-            letter-spacing: 1px;
-        }
-
-        /* error state */
-        .error-text { color: rgba(252,169,253,0.8); }
+        .error-text { color: var(--pink); }
     </style>
 </head>
 <body>
@@ -444,92 +463,124 @@
 
     <!-- ════ LEFT PANEL ════ -->
     <div id="panel">
+        <!-- blobs -->
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+
         <div id="panel-header">
-            <div class="logo">
-                <span class="logo-word">SPLAT</span>
-                <span class="logo-ext">.EXE</span>
-            </div>
-            <div class="logo-sub">GAUSSIAN RENDERER // V1.0</div>
+            <div class="logo-title">SPLAT<br>CONTROL</div>
         </div>
 
         <div id="panel-scroll">
 
-            <!-- Input -->
+            <!-- INPUT -->
             <div class="section">
-                <div class="sec-title">Input</div>
+                <div class="sec-title">INPUT</div>
                 <input type="file" id="file-input" accept=".splat,.ply,.ksplat" style="display:none">
-                <button class="btn accent" id="load-btn">[ Load .splat / .ply ]</button>
+                <button class="btn" id="load-btn">[ LOAD .SPLAT OR .PLY ]</button>
                 <div id="status">— awaiting input —</div>
             </div>
 
-            <!-- Render -->
+            <!-- CAMERA -->
             <div class="section">
-                <div class="sec-title">Render</div>
+                <div class="sec-title">CAMERA</div>
 
-                <div class="ctrl-group">
-                    <div class="ctrl-row">
-                        <span class="ctrl-label">Splat Scale</span>
-                        <span class="ctrl-val" id="val-scale">1.00</span>
+                <div class="ctrl-row">
+                    <span class="ctrl-lbl">FOV</span>
+                    <div class="slider-wrap">
+                        <div class="slider-fill" id="fill-fov"></div>
+                        <div class="slider-dot"  id="dot-fov"></div>
+                        <input type="range" id="ctrl-fov" min="20" max="100" step="1" value="60">
                     </div>
-                    <input type="range" id="ctrl-scale" min="0.1" max="3.0" step="0.05" value="1.0">
+                    <span class="ctrl-val" id="val-fov">60°</span>
                 </div>
 
-                <div class="ctrl-group">
-                    <div class="ctrl-row">
-                        <span class="ctrl-label">Opacity</span>
-                        <span class="ctrl-val" id="val-opacity">1.00</span>
+                <div class="ctrl-row">
+                    <span class="ctrl-lbl">MOVE SPEED</span>
+                    <div class="slider-wrap">
+                        <div class="slider-fill" id="fill-speed"></div>
+                        <div class="slider-dot"  id="dot-speed"></div>
+                        <input type="range" id="ctrl-speed" min="0.1" max="5.0" step="0.1" value="1.0">
                     </div>
-                    <input type="range" id="ctrl-opacity" min="0.0" max="1.0" step="0.01" value="1.0">
+                    <span class="ctrl-val" id="val-speed">1.0×</span>
                 </div>
 
-                <div class="ctrl-group">
-                    <div class="ctrl-row">
-                        <span class="ctrl-label">Alpha Cutoff</span>
-                        <span class="ctrl-val" id="val-alpha">5</span>
+                <div class="ctrl-row">
+                    <span class="ctrl-lbl">ORBIT</span>
+                    <div class="slider-wrap">
+                        <div class="slider-fill" id="fill-rotspeed"></div>
+                        <div class="slider-dot"  id="dot-rotspeed"></div>
+                        <input type="range" id="ctrl-rotspeed" min="0.1" max="3.0" step="0.1" value="1.0">
                     </div>
-                    <input type="range" id="ctrl-alpha" min="0" max="50" step="1" value="5">
+                    <span class="ctrl-val" id="val-rotspeed">1.0</span>
+                </div>
+
+                <button class="btn" onclick="resetCamera()">[ RESET CAMERA ]</button>
+            </div>
+
+            <!-- RENDER -->
+            <div class="section">
+                <div class="sec-title">RENDER</div>
+
+                <div class="ctrl-row">
+                    <span class="ctrl-lbl">SCALE</span>
+                    <div class="slider-wrap">
+                        <div class="slider-fill" id="fill-scale"></div>
+                        <div class="slider-dot"  id="dot-scale"></div>
+                        <input type="range" id="ctrl-scale" min="0.1" max="3.0" step="0.05" value="1.0">
+                    </div>
+                    <span class="ctrl-val" id="val-scale">1.00</span>
+                </div>
+
+                <div class="ctrl-row">
+                    <span class="ctrl-lbl">OPACITY</span>
+                    <div class="slider-wrap">
+                        <div class="slider-fill" id="fill-opacity"></div>
+                        <div class="slider-dot"  id="dot-opacity"></div>
+                        <input type="range" id="ctrl-opacity" min="0" max="1.0" step="0.01" value="1.0">
+                    </div>
+                    <span class="ctrl-val" id="val-opacity">1.00</span>
+                </div>
+
+                <div class="ctrl-row">
+                    <span class="ctrl-lbl">ALPHA CUTOFF</span>
+                    <div class="slider-wrap">
+                        <div class="slider-fill" id="fill-alpha"></div>
+                        <div class="slider-dot"  id="dot-alpha"></div>
+                        <input type="range" id="ctrl-alpha" min="0" max="50" step="1" value="5">
+                    </div>
+                    <span class="ctrl-val" id="val-alpha">5</span>
+                </div>
+
+                <div class="ctrl-row" style="grid-template-columns:96px minmax(0,1fr)">
+                    <span class="ctrl-lbl">SH DEGREE</span>
+                    <div class="btn-group" id="sh-group">
+                        <button onclick="setSH(0)">0</button>
+                        <button onclick="setSH(1)">1</button>
+                        <button onclick="setSH(2)">2</button>
+                        <button class="active" onclick="setSH(3)">3</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Camera -->
+            <!-- VIEW -->
             <div class="section">
-                <div class="sec-title">Camera</div>
-
-                <div class="ctrl-group">
-                    <div class="ctrl-row">
-                        <span class="ctrl-label">Move Speed</span>
-                        <span class="ctrl-val" id="val-speed">1.0</span>
-                    </div>
-                    <input type="range" id="ctrl-speed" min="0.1" max="5.0" step="0.1" value="1.0">
-                </div>
-
-                <div class="ctrl-group">
-                    <div class="ctrl-row">
-                        <span class="ctrl-label">Orbit Speed</span>
-                        <span class="ctrl-val" id="val-rotspeed">1.0</span>
-                    </div>
-                    <input type="range" id="ctrl-rotspeed" min="0.1" max="3.0" step="0.1" value="1.0">
-                </div>
-
-                <button class="btn" onclick="resetCamera()">[ Reset Camera ]</button>
-            </div>
-
-            <!-- View -->
-            <div class="section">
-                <div class="sec-title">View</div>
+                <div class="sec-title">VIEW</div>
 
                 <div class="toggle-row" onclick="toggleOpt('axes')">
-                    <span class="ctrl-label">Show Axes</span>
+                    <span class="ctrl-lbl">SHOW AXES</span>
                     <div class="toggle" id="tgl-axes"></div>
                 </div>
 
                 <div class="toggle-row" onclick="toggleOpt('grid')">
-                    <span class="ctrl-label">Show Grid</span>
+                    <span class="ctrl-lbl">SHOW GRID</span>
                     <div class="toggle" id="tgl-grid"></div>
                 </div>
 
                 <div class="toggle-row" onclick="toggleOpt('bg')">
-                    <span class="ctrl-label">Dark Background</span>
+                    <span class="ctrl-lbl">DARK BACKGROUND</span>
                     <div class="toggle on" id="tgl-bg"></div>
                 </div>
             </div>
@@ -549,17 +600,15 @@
         <div class="corner corner-bl"></div>
         <div class="corner corner-br"></div>
 
-        <!-- Loading / drop screen -->
         <div id="loading">
             <div class="load-title" id="load-title">SPLAT_</div>
-            <div class="load-msg" id="load-msg">Loading Barbican scan…</div>
-            <div id="drop-hint">— or drag &amp; drop here —</div>
+            <div class="load-msg"   id="load-msg">Loading Barbican scan…</div>
+            <div id="drop-hint">— or drag &amp; drop a file here —</div>
             <div class="load-bar-wrap" id="load-bar-wrap">
                 <div class="load-bar" id="load-bar"></div>
             </div>
         </div>
 
-        <!-- Key controls hint -->
         <div id="controls-hint">
             <div class="hint-row"><span class="hk">↑ / ↓</span><span class="hd">Forward / Back</span></div>
             <div class="hint-row"><span class="hk">← / →</span><span class="hd">Orbit left / right</span></div>
@@ -572,10 +621,6 @@
 
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     Import map — pin three to a specific version so it
-     is shared between our code and the splat library.
-═══════════════════════════════════════════════════ -->
 <script type="importmap">
 {
     "imports": {
@@ -590,9 +635,7 @@
 import * as THREE from 'three';
 import * as GS3D from '@mkkellogg/gaussian-splats-3d';
 
-// ──────────────────────────────────────────────────────
-// Elements
-// ──────────────────────────────────────────────────────
+// ── Elements ──────────────────────────────────────────
 const viewport    = document.getElementById('viewport');
 const loadingEl   = document.getElementById('loading');
 const loadTitle   = document.getElementById('load-title');
@@ -603,28 +646,19 @@ const dropHint    = document.getElementById('drop-hint');
 const statusEl    = document.getElementById('status');
 const fpsEl       = document.getElementById('fps');
 
-// ──────────────────────────────────────────────────────
-// State
-// ──────────────────────────────────────────────────────
-const cfg = {
-    moveSpeed: 1.0,
-    rotSpeed:  1.0,
-};
-
+// ── State ─────────────────────────────────────────────
+const cfg = { moveSpeed: 1.0, rotSpeed: 1.0 };
 const keys = Object.create(null);
-let splatLoaded = false;
 let fpsCount = 0, fpsAccum = 0, lastT = performance.now();
 
-// ──────────────────────────────────────────────────────
-// Viewer
-// ──────────────────────────────────────────────────────
+// ── Viewer ────────────────────────────────────────────
 const viewer = new GS3D.Viewer({
-    rootElement:         viewport,
-    selfDrivenMode:      false,
-    useBuiltInControls:  true,
-    cameraUp:            [0, 1, 0],
-    initialCameraPosition: [0, 1, 3],
-    initialCameraLookAt:   [0, 0, 0],
+    rootElement:            viewport,
+    selfDrivenMode:         false,
+    useBuiltInControls:     true,
+    cameraUp:               [0, 1, 0],
+    initialCameraPosition:  [0, 1, 3],
+    initialCameraLookAt:    [0, 0, 0],
     sharedMemoryForWorkers: false,
 });
 
@@ -632,16 +666,13 @@ const camera   = viewer.camera;
 const renderer = viewer.renderer;
 renderer.setClearColor(0x040406, 1);
 
-// Disable OrbitControls' own arrow-key listener so ours takes over
 if (viewer.controls) {
     viewer.controls.listenToKeyEvents(null);
     viewer.controls.enableDamping = true;
     viewer.controls.dampingFactor = 0.08;
 }
 
-// ──────────────────────────────────────────────────────
-// Helpers scene (axes + grid rendered on top)
-// ──────────────────────────────────────────────────────
+// ── Helper scene ──────────────────────────────────────
 const helperScene = new THREE.Scene();
 const axesHelper  = new THREE.AxesHelper(1);
 const gridHelper  = new THREE.GridHelper(10, 20, 0x2a2a3a, 0x15151e);
@@ -649,18 +680,14 @@ axesHelper.visible = false;
 gridHelper.visible = false;
 helperScene.add(axesHelper, gridHelper);
 
-// ──────────────────────────────────────────────────────
-// Render loop
-// ──────────────────────────────────────────────────────
+// ── Render loop ───────────────────────────────────────
 function animate() {
     requestAnimationFrame(animate);
-
     const now = performance.now();
     const dt  = Math.min((now - lastT) / 1000, 0.1);
     lastT = now;
 
-    fpsAccum += dt;
-    fpsCount++;
+    fpsAccum += dt; fpsCount++;
     if (fpsAccum >= 0.6) {
         fpsEl.textContent = Math.round(fpsCount / fpsAccum) + ' fps';
         fpsAccum = 0; fpsCount = 0;
@@ -679,14 +706,10 @@ function animate() {
 
 animate();
 
-// ──────────────────────────────────────────────────────
-// Keyboard controls (Y-up, arrow keys)
-// ──────────────────────────────────────────────────────
+// ── Keyboard controls (Y-up) ──────────────────────────
 document.addEventListener('keydown', e => {
     keys[e.code] = true;
-    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) {
-        e.preventDefault();
-    }
+    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
 });
 document.addEventListener('keyup', e => { keys[e.code] = false; });
 
@@ -698,59 +721,36 @@ function handleKeys(dt) {
     const mSpeed = cfg.moveSpeed * 2.2 * dt;
     const rSpeed = cfg.rotSpeed  * 1.6 * dt;
 
-    // flat forward vector (Y-up: ignore Y component)
     const fwd = new THREE.Vector3();
     camera.getWorldDirection(fwd);
     fwd.y = 0;
     if (fwd.lengthSq() < 0.0001) fwd.set(0, 0, -1);
     fwd.normalize();
 
-    const right = new THREE.Vector3().crossVectors(fwd, new THREE.Vector3(0, 1, 0)).normalize();
+    const right = new THREE.Vector3().crossVectors(fwd, new THREE.Vector3(0,1,0)).normalize();
     const target = controls.target;
 
     if (!shift) {
-        if (keys['ArrowUp']) {
-            camera.position.addScaledVector(fwd, mSpeed);
-            target.addScaledVector(fwd, mSpeed);
-        }
-        if (keys['ArrowDown']) {
-            camera.position.addScaledVector(fwd, -mSpeed);
-            target.addScaledVector(fwd, -mSpeed);
-        }
+        if (keys['ArrowUp'])   { camera.position.addScaledVector(fwd,  mSpeed); target.addScaledVector(fwd,  mSpeed); }
+        if (keys['ArrowDown']) { camera.position.addScaledVector(fwd, -mSpeed); target.addScaledVector(fwd, -mSpeed); }
         if (keys['ArrowLeft'] || keys['ArrowRight']) {
-            const sign  = keys['ArrowLeft'] ? 1 : -1;
-            const axis  = new THREE.Vector3(0, 1, 0);
+            const sign = keys['ArrowLeft'] ? 1 : -1;
             const offset = camera.position.clone().sub(target);
-            offset.applyAxisAngle(axis, sign * rSpeed);
+            offset.applyAxisAngle(new THREE.Vector3(0,1,0), sign * rSpeed);
             camera.position.copy(target).add(offset);
             camera.lookAt(target);
         }
     } else {
-        // Shift held → elevate / strafe
-        if (keys['ArrowUp']) {
-            camera.position.y += mSpeed;
-            target.y += mSpeed;
-        }
-        if (keys['ArrowDown']) {
-            camera.position.y -= mSpeed;
-            target.y -= mSpeed;
-        }
-        if (keys['ArrowLeft']) {
-            camera.position.addScaledVector(right, -mSpeed);
-            target.addScaledVector(right, -mSpeed);
-        }
-        if (keys['ArrowRight']) {
-            camera.position.addScaledVector(right, mSpeed);
-            target.addScaledVector(right, mSpeed);
-        }
+        if (keys['ArrowUp'])    { camera.position.y += mSpeed; target.y += mSpeed; }
+        if (keys['ArrowDown'])  { camera.position.y -= mSpeed; target.y -= mSpeed; }
+        if (keys['ArrowLeft'])  { camera.position.addScaledVector(right, -mSpeed); target.addScaledVector(right, -mSpeed); }
+        if (keys['ArrowRight']) { camera.position.addScaledVector(right,  mSpeed); target.addScaledVector(right,  mSpeed); }
     }
 
     controls.update();
 }
 
-// ──────────────────────────────────────────────────────
-// File loading
-// ──────────────────────────────────────────────────────
+// ── File loading ──────────────────────────────────────
 async function loadUrl(url, displayName, ext) {
     loadTitle.textContent     = 'LOADING_';
     loadMsg.textContent       = displayName;
@@ -780,14 +780,11 @@ async function loadUrl(url, displayName, ext) {
         });
 
         loadBar.style.width = '100%';
-        splatLoaded = true;
-
         setTimeout(() => {
             loadingEl.style.display   = 'none';
             loadBarWrap.style.display = 'none';
             dropHint.style.display    = '';
         }, 350);
-
         setStatus('✓ ' + displayName);
     } catch (err) {
         console.error(err);
@@ -802,10 +799,7 @@ async function loadUrl(url, displayName, ext) {
 async function loadFile(file) {
     if (!file) return;
     const ext = file.name.split('.').pop().toLowerCase();
-    if (!['splat','ply','ksplat'].includes(ext)) {
-        setStatus('Unsupported format: .' + ext);
-        return;
-    }
+    if (!['splat','ply','ksplat'].includes(ext)) { setStatus('Unsupported: .' + ext); return; }
     const url = URL.createObjectURL(file);
     await loadUrl(url, file.name, ext);
     URL.revokeObjectURL(url);
@@ -814,86 +808,81 @@ async function loadFile(file) {
 function setStatus(msg) { statusEl.textContent = msg; }
 
 // File picker
-document.getElementById('load-btn').addEventListener('click', () => {
-    document.getElementById('file-input').click();
-});
-document.getElementById('file-input').addEventListener('change', e => {
-    loadFile(e.target.files?.[0]);
-    e.target.value = '';
-});
+document.getElementById('load-btn').addEventListener('click', () => document.getElementById('file-input').click());
+document.getElementById('file-input').addEventListener('change', e => { loadFile(e.target.files?.[0]); e.target.value = ''; });
 
 // Drag & drop
 viewport.addEventListener('dragover', e => { e.preventDefault(); viewport.classList.add('drag-over'); });
 viewport.addEventListener('dragleave', () => viewport.classList.remove('drag-over'));
-viewport.addEventListener('drop', e => {
-    e.preventDefault();
-    viewport.classList.remove('drag-over');
-    loadFile(e.dataTransfer.files?.[0]);
-});
+viewport.addEventListener('drop', e => { e.preventDefault(); viewport.classList.remove('drag-over'); loadFile(e.dataTransfer.files?.[0]); });
 
-// ──────────────────────────────────────────────────────
-// Slider utility
-// ──────────────────────────────────────────────────────
-function initSlider(rangeId, valId, digits, onUpdate) {
+// ── Slider utility ────────────────────────────────────
+function initSlider(rangeId, valId, fmt, onUpdate) {
     const range = document.getElementById(rangeId);
     const valEl = document.getElementById(valId);
+    const fill  = document.getElementById('fill-' + rangeId.replace('ctrl-',''));
+    const dot   = document.getElementById('dot-'  + rangeId.replace('ctrl-',''));
 
     function sync() {
         const v   = parseFloat(range.value);
         const min = parseFloat(range.min);
         const max = parseFloat(range.max);
-        const pct = ((v - min) / (max - min) * 100).toFixed(1);
-        range.style.setProperty('--pct', pct + '%');
-        valEl.textContent = v.toFixed(digits);
+        const pct = (v - min) / (max - min) * 100;
+        if (fill) fill.style.width = pct + '%';
+        if (dot)  dot.style.left   = pct + '%';
+        valEl.textContent = fmt(v);
         onUpdate(v);
     }
 
     range.addEventListener('input', sync);
-    sync(); // initialise fill + value display
+    sync();
 }
 
-initSlider('ctrl-scale', 'val-scale', 2, v => {
+initSlider('ctrl-fov',      'val-fov',      v => Math.round(v) + '°', v => {
+    camera.fov = v;
+    camera.updateProjectionMatrix();
+});
+
+initSlider('ctrl-speed',    'val-speed',    v => v.toFixed(1) + '×', v => { cfg.moveSpeed = v; });
+initSlider('ctrl-rotspeed', 'val-rotspeed', v => v.toFixed(1),        v => { cfg.rotSpeed  = v; });
+
+initSlider('ctrl-scale',    'val-scale',    v => v.toFixed(2), v => {
     try { viewer.splatMesh?.setSplatScale?.(v); } catch(_) {}
 });
 
-initSlider('ctrl-opacity', 'val-opacity', 2, v => {
-    try {
-        if (viewer.splatMesh?.material) viewer.splatMesh.material.opacity = v;
-    } catch(_) {}
+initSlider('ctrl-opacity',  'val-opacity',  v => v.toFixed(2), v => {
+    try { if (viewer.splatMesh?.material) viewer.splatMesh.material.opacity = v; } catch(_) {}
 });
 
-initSlider('ctrl-alpha', 'val-alpha', 0, () => {});   // applied on next load
+initSlider('ctrl-alpha',    'val-alpha',    v => Math.round(v), () => {});
 
-initSlider('ctrl-speed',    'val-speed',    1, v => { cfg.moveSpeed = v; });
-initSlider('ctrl-rotspeed', 'val-rotspeed', 1, v => { cfg.rotSpeed  = v; });
+// ── SH Degree ─────────────────────────────────────────
+let currentSH = 3;
+window.setSH = function(deg) {
+    currentSH = deg;
+    document.querySelectorAll('#sh-group button').forEach((btn, i) => {
+        btn.classList.toggle('active', i === deg);
+    });
+    try { if (viewer.splatMesh) viewer.splatMesh.sphericalHarmonicsDegree = deg; } catch(_) {}
+};
 
-// ──────────────────────────────────────────────────────
-// Toggles
-// ──────────────────────────────────────────────────────
+// ── Toggles ───────────────────────────────────────────
 window.toggleOpt = function(opt) {
     const tgl = document.getElementById('tgl-' + opt);
     const on  = tgl.classList.toggle('on');
-
     if (opt === 'axes') axesHelper.visible = on;
     if (opt === 'grid') gridHelper.visible = on;
     if (opt === 'bg')   renderer.setClearColor(on ? 0x040406 : 0x1c1b2e, 1);
 };
 
-// ──────────────────────────────────────────────────────
-// Reset camera
-// ──────────────────────────────────────────────────────
+// ── Reset camera ──────────────────────────────────────
 window.resetCamera = function() {
     camera.position.set(0, 1, 3);
     camera.lookAt(0, 0, 0);
-    if (viewer.controls) {
-        viewer.controls.target.set(0, 0, 0);
-        viewer.controls.update();
-    }
+    if (viewer.controls) { viewer.controls.target.set(0, 0, 0); viewer.controls.update(); }
 };
 
-// ──────────────────────────────────────────────────────
-// Auto-load default scan on startup
-// ──────────────────────────────────────────────────────
+// ── Auto-load default scan ────────────────────────────
 loadUrl('./Splat/Barbican_converted_to_ply.ply', 'Barbican_converted_to_ply.ply', 'ply');
 </script>
 </body>

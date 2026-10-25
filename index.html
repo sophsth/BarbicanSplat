@@ -604,8 +604,8 @@
 
         <div id="loading">
             <div class="load-title" id="load-title">SPLAT_</div>
-            <div class="load-msg"   id="load-msg">Loading Barbican scan…</div>
-            <div id="drop-hint">— or drag &amp; drop a file here —</div>
+            <div class="load-msg"   id="load-msg" style="display:none"></div>
+            <div id="drop-hint" style="display:none"></div>
             <div class="load-bar-wrap" id="load-bar-wrap">
                 <div class="load-bar" id="load-bar"></div>
             </div>
@@ -754,10 +754,7 @@ function handleKeys(dt) {
 
 // ── File loading ──────────────────────────────────────
 async function loadUrl(url, displayName, ext) {
-    loadTitle.textContent     = 'LOADING_';
-    loadMsg.textContent       = displayName;
-    loadMsg.classList.remove('error-text');
-    dropHint.style.display    = 'none';
+    loadTitle.textContent     = 'SPLAT_';
     loadBarWrap.style.display = 'block';
     loadBar.style.width       = '8%';
     loadingEl.style.display   = 'flex';
@@ -790,10 +787,8 @@ async function loadUrl(url, displayName, ext) {
         setStatus('✓ ' + displayName);
     } catch (err) {
         console.error(err);
-        loadTitle.textContent = 'ERROR_';
-        loadMsg.textContent   = err.message || 'Failed to load scene';
-        loadMsg.classList.add('error-text');
-        loadBar.style.width   = '0%';
+        loadingEl.style.display   = 'none';
+        loadBarWrap.style.display = 'none';
         setStatus('Error: ' + (err.message || 'load failed'));
     }
 }

@@ -637,6 +637,7 @@
 
 <script type="module">
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import * as GS3D from '@mkkellogg/gaussian-splats-3d';
 
 // ── Elements ──────────────────────────────────────────
@@ -659,7 +660,7 @@ let fpsCount = 0, fpsAccum = 0, lastT = performance.now();
 const viewer = new GS3D.Viewer({
     rootElement:            viewport,
     selfDrivenMode:         false,
-    useBuiltInControls:     true,
+    useBuiltInControls:     false,
     cameraUp:               [0, 1, 0],
     initialCameraPosition:  [0, 1, 3],
     initialCameraLookAt:    [0, 0, 0],
@@ -670,10 +671,12 @@ const camera   = viewer.camera;
 const renderer = viewer.renderer;
 renderer.setClearColor(0x040406, 1);
 
-if (viewer.controls) {
-    viewer.controls.enableDamping = true;
-    viewer.controls.dampingFactor = 0.08;
-}
+// Set up our own OrbitControls (avoids the library calling listenToKeyEvents internally)
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 0, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.update();
 
 // ── Helper scene ──────────────────────────────────────
 const helperScene = new THREE.Scene();
@@ -717,8 +720,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('keyup', e => { keys[e.code] = false; });
 
 function handleKeys(dt) {
-    const controls = viewer.controls;
-    if (!camera || !controls) return;
+    if (!camera) return;
 
     const shift  = keys['ShiftLeft'] || keys['ShiftRight'];
     const mSpeed = cfg.moveSpeed * 2.2 * dt;
@@ -917,7 +919,8 @@ window.toggleOpt = function(opt) {
 window.resetCamera = function() {
     camera.position.set(0, 1, 3);
     camera.lookAt(0, 0, 0);
-    if (viewer.controls) { viewer.controls.target.set(0, 0, 0); viewer.controls.update(); }
+    controls.target.set(0, 0, 0);
+    controls.update();
 };
 
 // ── Auto-load default scan ────────────────────────────

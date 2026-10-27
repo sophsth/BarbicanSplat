@@ -800,11 +800,8 @@ async function loadUrl(url, displayName, ext) {
         progressEl.textContent = 'PROCESSING…';
         loadBar.style.width    = '90%';
 
-        // Reassemble into a single ArrayBuffer → blob URL
-        const buffer = new Uint8Array(received);
-        let pos = 0;
-        for (const chunk of chunks) { buffer.set(chunk, pos); pos += chunk.length; }
-        const blob    = new Blob([buffer], { type: 'application/octet-stream' });
+        // Build blob directly from chunks — avoids a single 2.4 GB contiguous allocation
+        const blob    = new Blob(chunks, { type: 'application/octet-stream' });
         const blobUrl = URL.createObjectURL(blob);
 
         await viewer.addSplatScene(blobUrl, {

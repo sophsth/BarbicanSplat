@@ -552,7 +552,7 @@
                     <div class="slider-wrap">
                         <div class="slider-fill" id="fill-alpha"></div>
                         <div class="slider-dot"  id="dot-alpha"></div>
-                        <input type="range" id="ctrl-alpha" min="0" max="50" step="1" value="5">
+                        <input type="range" id="ctrl-alpha" min="0" max="50" step="1" value="1">
                     </div>
                     <span class="ctrl-val" id="val-alpha">5</span>
                 </div>
@@ -574,7 +574,7 @@
 
                 <div class="toggle-row" onclick="toggleOpt('axes')">
                     <span class="ctrl-lbl">SHOW AXES</span>
-                    <div class="toggle" id="tgl-axes"></div>
+                    <div class="toggle on" id="tgl-axes"></div>
                 </div>
 
                 <div class="toggle-row" onclick="toggleOpt('grid')">
@@ -682,7 +682,7 @@ controls.update();
 const helperScene = new THREE.Scene();
 const axesHelper  = new THREE.AxesHelper(1);
 const gridHelper  = new THREE.GridHelper(10, 20, 0x2a2a3a, 0x15151e);
-axesHelper.visible = false;
+axesHelper.visible = true;
 gridHelper.visible = false;
 helperScene.add(axesHelper, gridHelper);
 
@@ -700,6 +700,7 @@ function animate() {
     }
 
     handleKeys(dt);
+    controls.update();
     viewer.update();
     viewer.render();
 
@@ -818,6 +819,7 @@ async function loadUrl(url, displayName, ext) {
 
         URL.revokeObjectURL(blobUrl);
         loadBar.style.width = '100%';
+        console.log('[splat] scene loaded OK', viewer.splatMesh);
         setTimeout(() => {
             loadingEl.style.display  = 'none';
             progressEl.style.display = 'none';
